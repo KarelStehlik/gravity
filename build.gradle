@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.86.5'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+project.ext.lwjglVersion = "3.2.3"
+project.ext.jomlVersion = "1.10.4"
+
+
+project.ext.lwjglNatives = (System.properties['os.name'].toLowerCase(Locale.ROOT).contains('windows'))? "natives-windows" : "natives-linux"
+project.ext.imguiVersion = "${version}"
+
+dependencies {
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-assimp"
+    implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-nfd"
+    implementation "org.lwjgl:lwjgl-openal"
+    implementation "org.lwjgl:lwjgl-opengl"
+    implementation "org.lwjgl:lwjgl-stb"
+
+    runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-assimp::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-nfd::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-openal::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-stb::$lwjglNatives"
+
+    implementation "org.joml:joml:1.10.4"
+
+
+
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    ['', '-opengl', '-glfw'].each {
+        implementation "org.lwjgl:lwjgl$it:$lwjglVersion"
+        implementation "org.lwjgl:lwjgl$it::$lwjglNatives"
+    }
+
+    implementation "io.github.spair:imgui-java-binding:1.86.5"
+    implementation "io.github.spair:imgui-java-lwjgl3:1.86.5"
+
+    implementation "io.github.spair:imgui-java-natives-windows:1.86.4"
+    implementation 'io.github.spair:imgui-java-natives-linux:1.86.5'
+}
