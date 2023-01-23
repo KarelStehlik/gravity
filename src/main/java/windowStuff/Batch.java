@@ -41,7 +41,7 @@ final class Batch {
   private final int maxSize;
   private final int vao, vbo, ebo;
   boolean isEmpty;
-  float[] vertices ;
+  float[] vertices;
 
   Batch(String textureName, int size, String shader, int layer, BatchSystem system) {
     texture = Data.getTexture(textureName);
@@ -120,8 +120,9 @@ final class Batch {
       sprites[sprite.slotInBatch] = null;
     }
     freeSpriteSlots.add(sprite.slotInBatch);
-    for(int i = Constants.SpriteSizeFloats * sprite.slotInBatch; i<Constants.SpriteSizeFloats * (sprite.slotInBatch+1);i++){
-      vertices[i]=0;
+    for (int i = Constants.SpriteSizeFloats * sprite.slotInBatch;
+        i < Constants.SpriteSizeFloats * (sprite.slotInBatch + 1); i++) {
+      vertices[i] = 0;
     }
     if (freeSpriteSlots.size() == maxSize) {
       isEmpty = true;

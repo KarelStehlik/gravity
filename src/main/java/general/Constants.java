@@ -13,7 +13,7 @@ public final class Constants {
   public static final int SpriteSizeFloats = 36;
   public static final Vector2i screenSize;
 
-  public static final float G = 0.5f;
+  public static final float G = 1;
 
 
   static {

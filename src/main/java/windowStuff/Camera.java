@@ -11,6 +11,7 @@ public class Camera {
   private final Matrix4f projection;
   private final Vector3f position;
   private final Matrix4f view;
+  private float zoom = 1;
 
   public Camera(Vector3f position) {
     projection = new Matrix4f();
@@ -21,9 +22,25 @@ public class Camera {
         up); // position.add(forward) is different from video
   }
 
+  public float getX() {
+    return position.x;
+  }
+
+  public float getY() {
+    return position.y;
+  }
+
+  public float getZoom() {
+    return zoom;
+  }
+
+  public void setZoom(float zoom) {
+    this.zoom = zoom;
+    adjustProjection();
+  }
+
   public void adjustProjection() {
-    projection.setOrtho(0f, 1920, 0f, 1080, 0f, 100f);
-    // projection.setPerspective(3f, 1.4f, 1, 100);
+    projection.setOrtho(0f, 1920 * zoom, 0f, 1080 * zoom, 0f, 100f);
   }
 
   public Matrix4f getViewMatrix() {

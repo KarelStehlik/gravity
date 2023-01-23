@@ -1,33 +1,58 @@
 package main;
 
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+
 import general.Data;
 import imgui.ImGui;
+import imgui.type.ImBoolean;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import windowStuff.BatchSystem;
+import windowStuff.Camera;
 import windowStuff.Sprite;
 import windowStuff.UserInputHandler;
 import windowStuff.UserInputListener;
 import windowStuff.Window;
 
 public class Game implements Window.GameplayLoop, UserInputHandler {
-  BatchSystem bs = new BatchSystem();
-  private UserInputListener input;
+
+  private final BatchSystem bs = new BatchSystem();
+  private final Camera camera;
+  private final UserInputListener input;
   private final GravitySimulator simulator = new BruteForce();
   private final List<Planet> planets = new LinkedList<>();
+  private float timeStep = 0.1f;
+  private float targetSpeed = 0.5f;
+  private float timeElapsed = 0;
+  private boolean placeStaticObjects = false;
+  private float mass = 100, size = 50, vx = 0, vy = 0;
+  private boolean paused = false;
+  private int newCount = 10;
+  private float newSpread = 100;
 
 
-  public Game(Window win){
+  public Game(Window win) {
     win.getGraphics().addBatchSystem(bs);
+    camera = bs.getCamera();
     input = win.getUserInputListener();
   }
 
-  private void testMake(float x,float y, int mass){
-    Sprite test = new Sprite("Bowman",100,100,100,100,5,"basic");
+  private void testMake(float x, float y) {
+    Sprite test = new Sprite("Bowman", 100, 100, 100, 100, 5, "basic");
     test.addToBs(bs);
-    Planet p = new Planet(test,x,y,mass, 100);
-    p.applyForce(Data.gameMechanicsRng.nextFloat(-10,10), Data.gameMechanicsRng.nextFloat(-10,10));
+    Planet p = new Planet(test, x, y, mass, size);
+    p.vx = vx;
+    p.vy = vy;
+    p.setLocked(placeStaticObjects);
     planets.add(p);
   }
 
@@ -36,44 +61,122 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
 
   }
 
+  private float toWorldX(float screenX) {
+    return screenX * camera.getZoom() + camera.getX();
+  }
+
+  private float toWorldY(float screenX) {
+    return screenX * camera.getZoom() + camera.getY();
+  }
+
   @Override
   public void onMouseButton(int button, int action, int mods) {
-    if(action==0){
-      if(button==0) {
-        testMake(input.getX(), input.getY(), 10);
-      }else if(button==1){
-        testMake(input.getX(), input.getY(), 1000);
+    if (action == 0) {
+      if (button == 0) {
+        testMake(toWorldX(input.getX()), toWorldY(input.getY()));
+        for (int i = 0; i < newCount - 1; i++) {
+          float dx, dy;
+          do {
+            dx = Data.gameMechanicsRng.nextFloat(-newSpread, newSpread);
+            dy = Data.gameMechanicsRng.nextFloat(-newSpread, newSpread);
+          }
+          while (dx * dx + dy * dy > newSpread * newSpread);
+          testMake(toWorldX(input.getX()) + dx, toWorldY(input.getY()) + dy);
+        }
       }
     }
   }
 
   @Override
   public void onScroll(double xOffset, double yOffset) {
-
+    camera.setZoom(camera.getZoom() * (float) Math.pow(1.1, -yOffset));
   }
 
   @Override
   public void onKeyPress(int key, int action, int mods) {
-
+    if (key == GLFW_KEY_SPACE && action == 0) {
+      paused = !paused;
+    }
   }
 
   @Override
   public void graphicsUpdate(float dt) {
     ImGui.showDemoWindow();
-    ImGui.text("test");
+    ImGui.setNextWindowSize(500, 500);
+    ImGui.begin("ui");
+    if (ImGui.collapsingHeader("simulation properties")) {
+      float[] value = new float[]{timeStep};
+      if (ImGui.sliderFloat("time step", value, 0, 1)) {
+        timeStep = value[0];
+      }
+      float[] value2 = new float[]{targetSpeed};
+      if (ImGui.sliderFloat("target simulation speed", value2, 0, 1)) {
+        targetSpeed = value2[0];
+      }
+      ImBoolean pause = new ImBoolean(paused);
+      if (ImGui.checkbox("pause (spacebar)", pause)) {
+        paused = pause.get();
+      }
+    }
+    if (ImGui.collapsingHeader("new objects (left click)")) {
+      ImBoolean locked = new ImBoolean(placeStaticObjects);
+      if (ImGui.checkbox("locked position", locked)) {
+        placeStaticObjects = locked.get();
+      }
+      // private float mass = 100, size = 50, vx=0, vy=0;
+      float[] ms = new float[]{mass};
+      if (ImGui.dragFloat("mass", ms)) {
+        mass = ms[0];
+      }
+      float[] siz = new float[]{size};
+      if (ImGui.dragFloat("size", siz, 5f, 20f, 500f)) {
+        size = siz[0];
+      }
+      float[] vxy = new float[]{vx, vy};
+      if (ImGui.dragFloat2("speed", vxy, 0.05f, -10, 10)) {
+        vx = vxy[0];
+        vy = vxy[1];
+      }
+      int[] count = new int[]{newCount};
+      if (ImGui.dragInt("count", count, 1, 1, 100)) {
+        newCount = count[0];
+      }
+      float[] spread = new float[]{newSpread};
+      if (ImGui.dragFloat("spread", spread, 5, 5, 1000)) {
+        newSpread = spread[0];
+      }
+    }
+    ImGui.end();
+
+    camera.move(((input.isKeyPressed(GLFW_KEY_RIGHT) || input.isKeyPressed(GLFW_KEY_D)) ? 5
+            * camera.getZoom() : 0) -
+            ((input.isKeyPressed(GLFW_KEY_LEFT) || input.isKeyPressed(GLFW_KEY_A)) ? 5
+                * camera.getZoom() : 0),
+        ((input.isKeyPressed(GLFW_KEY_UP) || input.isKeyPressed(GLFW_KEY_W)) ? 5 * camera.getZoom()
+            : 0) -
+            ((input.isKeyPressed(GLFW_KEY_DOWN) || input.isKeyPressed(GLFW_KEY_S)) ? 5
+                * camera.getZoom() : 0),
+        0);
   }
 
   @Override
   public void tick() {
-    simulator.simulate(planets);
+    if (paused) {
+      return;
+    }
+    timeElapsed += targetSpeed;
+    while (timeElapsed > timeStep) {
+      timeElapsed -= timeStep;
+      simulator.simulate(planets, timeStep);
 
-    Iterator<Planet> iter = planets.iterator();
-    while(iter.hasNext()){
-      Planet p = iter.next();
-      if(p.WasDeleted()){
-        iter.remove();
-      }else{
-        p.onGameTick(0);
+      Iterator<Planet> iter = planets.iterator();
+      while (iter.hasNext()) {
+        Planet p = iter.next();
+        if (p.WasDeleted()) {
+          iter.remove();
+        } else {
+          p.onGameTick(timeStep);
+        }
       }
     }
   }

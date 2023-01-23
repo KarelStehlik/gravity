@@ -13,16 +13,10 @@ public class UserInputListener {
 
   private final boolean[] keysPressed;
   private final boolean[] buttonsPressed;
-
-  public void setInputHandler(UserInputHandler inputHandler) {
-    this.inputHandler = inputHandler;
-  }
-
-  private UserInputHandler inputHandler;
   private final BlockingQueue<Event> events = new LinkedBlockingQueue<>();
+  private UserInputHandler inputHandler;
   private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private boolean dragging;
-
   public UserInputListener(UserInputHandler g) {
     x = 0;
     y = 0;
@@ -36,6 +30,10 @@ public class UserInputListener {
     keysPressed = new boolean[350];
     buttonsPressed = new boolean[5];
     inputHandler = g;
+  }
+
+  public void setInputHandler(UserInputHandler inputHandler) {
+    this.inputHandler = inputHandler;
   }
 
   public void handleEvents() {

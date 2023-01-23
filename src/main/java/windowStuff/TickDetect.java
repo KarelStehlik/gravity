@@ -2,7 +2,7 @@ package windowStuff;
 
 public interface TickDetect {
 
-  void onGameTick(int tick);
+  void onGameTick(float dt);
 
   void delete();
 

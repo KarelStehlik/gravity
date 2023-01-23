@@ -27,9 +27,6 @@ import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import imgui.ImFont;
-import imgui.ImFontAtlas;
-import imgui.ImFontConfig;
 import imgui.ImGui;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
@@ -38,36 +35,14 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 
 public class Window {
-  public void setGame(GameplayLoop game) {
-    this.game = game;
-  }
 
   private final long window;
-
-  public UserInputListener getUserInputListener() {
-    return userInputListener;
-  }
-
   private final UserInputListener userInputListener = new UserInputListener(null);
-
-  public void setInputHandler(UserInputHandler h){
-    userInputListener.setInputHandler(h);
-  }
-
-  private volatile boolean running = false;
-
   private final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
   private final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
-
-  public Graphics getGraphics() {
-    return graphics;
-  }
-
   private final Graphics graphics;
-
-
+  private volatile boolean running = false;
   private GameplayLoop game = new NoGame();
-
   public Window() {
     System.out.println("Running LWJGL ver.. " + Version.getVersion());
 
@@ -91,7 +66,7 @@ public class Window {
 
     glfwMakeContextCurrent(window);
 
-    graphics=new Graphics();
+    graphics = new Graphics();
 
     glfwSetCursorPosCallback(window, userInputListener::mousePosCallback);
     glfwSetScrollCallback(window, userInputListener::scrollCallback);
@@ -107,6 +82,22 @@ public class Window {
     ImGui.createContext();
     imGuiGlfw.init(window, true);
     imGuiGl3.init("#version 330 core");
+  }
+
+  public void setGame(GameplayLoop game) {
+    this.game = game;
+  }
+
+  public UserInputListener getUserInputListener() {
+    return userInputListener;
+  }
+
+  public void setInputHandler(UserInputHandler h) {
+    userInputListener.setInputHandler(h);
+  }
+
+  public Graphics getGraphics() {
+    return graphics;
   }
 
   public void run() {
@@ -144,9 +135,9 @@ public class Window {
 
     game.graphicsUpdate(dt / 1000000000);
 
+    graphics.redraw(dt);
     ImGui.render();
     imGuiGl3.renderDrawData(ImGui.getDrawData());
-    graphics.redraw(dt);
     userInputListener.endFrame();
 
     glfwSwapBuffers(window);
@@ -172,7 +163,9 @@ public class Window {
   }
 
   public interface GameplayLoop {
+
     void graphicsUpdate(float dt);
+
     void tick();
   }
 

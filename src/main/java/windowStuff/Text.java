@@ -41,7 +41,7 @@ public class Text {
     text = value;
     this.maxWidth = width;
     fontName = font;
-    this.layer = layer+1;
+    this.layer = layer + 1;
     this.shader = shader;
     symbols = new LinkedList<>();
     scale = (float) (fontSize / textureHeight);
@@ -133,7 +133,8 @@ public class Text {
 
   public void move(int newX, int newY) {
     newX = Math.min(newX, Constants.screenSize.x - maxWidth);
-    newY = Math.min(newY + (int)(lineCount*fontSize), Constants.screenSize.y - (int)fontSize/2);
+    newY = Math.min(newY + (int) (lineCount * fontSize),
+        Constants.screenSize.y - (int) fontSize / 2);
     int dx = newX - x, dy = newY - y;
     for (var symbol : symbols) {
       symbol.move(symbol.sprite.getX() + dx, symbol.sprite.getY() + dy);
@@ -148,7 +149,7 @@ public class Text {
     float xOffset = fontSize / 4;
     for (int i = 0, size = symbols.size(); i < size; i++) {
       Symbol symbol = symbols.get(i);
-      if(symbol.character == '\n'){
+      if (symbol.character == '\n') {
         line++;
         xOffset = fontSize / 4;
       }
@@ -199,7 +200,7 @@ public class Text {
     }
 
     void updateScale() {
-      String imageName= fontName + '-' + Character.getName(character);
+      String imageName = fontName + '-' + Character.getName(character);
       float[] uv = Data.getImageCoordinates(imageName);
       float w = uv[0] - uv[2];
       width = w * scale;
@@ -219,7 +220,7 @@ public class Text {
     }
 
     void setCharacter(char c) {
-      String imageName =fontName + '-' + Character.getName(c);
+      String imageName = fontName + '-' + Character.getName(c);
       float[] uv = Data.getImageCoordinates(imageName);
       float w = uv[0] - uv[2];
       width = w * scale;

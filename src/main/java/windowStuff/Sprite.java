@@ -26,7 +26,7 @@ public class Sprite implements AbstractSprite {
   private String imageName;
   private Animation animation;
 
-  public Sprite(String imageName, int layer){
+  public Sprite(String imageName, int layer) {
     this(imageName, 0, 0, 100, 100, layer, "basic");
   }
 
@@ -208,7 +208,7 @@ public class Sprite implements AbstractSprite {
 
   protected synchronized void bufferToArray(int offset, float[] vertices) {
     for (int i = 0; i < 4; i++) {
-      int off = offset+9 * i;
+      int off = offset + 9 * i;
       vertices[off] = positions[3 * i];
       vertices[off + 1] = positions[3 * i + 1];
 
