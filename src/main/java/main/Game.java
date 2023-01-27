@@ -13,6 +13,8 @@ import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
 import general.Data;
 import imgui.ImGui;
 import imgui.type.ImBoolean;
+import imgui.type.ImFloat;
+import imgui.type.ImInt;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,7 +30,7 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
   private final BatchSystem bs = new BatchSystem();
   private final Camera camera;
   private final UserInputListener input;
-  private final GravitySimulator simulator = new BruteForce();
+  private final Tree simulator = new Tree(bs);
   private final List<Planet> planets = new LinkedList<>();
   private float timeStep = 0.1f;
   private float targetSpeed = 0.5f;
@@ -38,6 +40,7 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
   private boolean paused = false;
   private int newCount = 10;
   private float newSpread = 100;
+  private float G = 0.5f;
 
 
   public Game(Window win) {
@@ -113,9 +116,17 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
       if (ImGui.sliderFloat("target simulation speed", value2, 0, 1)) {
         targetSpeed = value2[0];
       }
+      float[] grav = new float[]{G};
+      if (ImGui.sliderFloat("gravity", grav, 0, 1)) {
+        G = grav[0];
+      }
       ImBoolean pause = new ImBoolean(paused);
       if (ImGui.checkbox("pause (spacebar)", pause)) {
         paused = pause.get();
+      }
+      ImBoolean vis = new ImBoolean(simulator.isVisible());
+      if (ImGui.checkbox("show tree", vis)) {
+        simulator.setVisible(vis.get());
       }
     }
     if (ImGui.collapsingHeader("new objects (left click)")) {
@@ -125,7 +136,7 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
       }
       // private float mass = 100, size = 50, vx=0, vy=0;
       float[] ms = new float[]{mass};
-      if (ImGui.dragFloat("mass", ms)) {
+      if (ImGui.dragFloat("mass", ms, 10, 1, 1000000)) {
         mass = ms[0];
       }
       float[] siz = new float[]{size};
@@ -167,17 +178,7 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
     timeElapsed += targetSpeed;
     while (timeElapsed > timeStep) {
       timeElapsed -= timeStep;
-      simulator.simulate(planets, timeStep);
-
-      Iterator<Planet> iter = planets.iterator();
-      while (iter.hasNext()) {
-        Planet p = iter.next();
-        if (p.WasDeleted()) {
-          iter.remove();
-        } else {
-          p.onGameTick(timeStep);
-        }
-      }
+      simulator.simulate(planets, timeStep, G);
     }
   }
 }

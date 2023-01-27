@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface GravitySimulator {
 
-  void simulate(List<Planet> world, float speed);
+  void simulate(List<? extends Planet> world, float speed, float G);
 }

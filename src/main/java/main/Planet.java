@@ -33,6 +33,11 @@ public class Planet implements TickDetect {
     vy += yComponent / mass;
   }
 
+  public void accelerate(float xComponent, float yComponent) {
+    vx += xComponent;
+    vy += yComponent;
+  }
+
   @Override
   public void onGameTick(float dt) {
     if (locked) {
