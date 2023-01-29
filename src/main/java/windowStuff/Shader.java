@@ -46,9 +46,13 @@ public class Shader {
       String[] sources = Files.readString(Paths.get(path)).split("#type ");
       for (String source : sources) {
         if (source.startsWith("fragment")) {
-          fragmentSource = source.substring(10);
+          for(int i=0;i<15;i++){
+            System.out.println(Character.getName(source.charAt(i)));
+          }
+          System.out.println();
+          fragmentSource = source.substring(source.indexOf('#'));
         } else if (source.startsWith("vertex")) {
-          vertexSource = source.substring(8);
+          vertexSource = source.substring(source.indexOf('#'));
         }
       }
     } catch (IOException e) {
