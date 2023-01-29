@@ -189,8 +189,6 @@ public final class Data {
   }
 
   public static void updateShaders() {
-    getShader("colorCycle").uploadUniform("time", (int) ((System.nanoTime() - startTime) >> 10));
-    getShader("colorCycle2").uploadUniform("time", (int) ((System.nanoTime() - startTime) >> 10));
   }
 
   /**
