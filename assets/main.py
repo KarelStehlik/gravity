@@ -98,7 +98,7 @@ class TestSetup:
         return True
 
     def save(self):
-        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (255,255,255,255))
+        new = Image.new('RGBA', (TEXSIZE, TEXSIZE), (0,0,0,0))
         text = ""
 
         for i in range(len(self.images)):
@@ -149,8 +149,6 @@ def add(fromFolder, e):
         files.append(img)
 for e in os.listdir("rawImages"):
     add("rawImages/",e)
-for e in os.listdir("fonts"):
-    add("fonts/",e)
 
 files.sort(key=lambda image: max(image.size[0], image.size[1]), reverse=True)
 n_textures = 0

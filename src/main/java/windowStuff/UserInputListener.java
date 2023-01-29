@@ -17,6 +17,7 @@ public class UserInputListener {
   private UserInputHandler inputHandler;
   private double x, y, dx, dy, lastX, lastY, scrollX, scrollY;
   private boolean dragging;
+
   public UserInputListener(UserInputHandler g) {
     x = 0;
     y = 0;

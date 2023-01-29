@@ -25,6 +25,8 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glCreateShader;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import imgui.ImGui;
@@ -43,6 +45,7 @@ public class Window {
   private final Graphics graphics;
   private volatile boolean running = false;
   private GameplayLoop game = new NoGame();
+
   public Window() {
     System.out.println("Running LWJGL ver.. " + Version.getVersion());
 

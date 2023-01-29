@@ -1,13 +1,14 @@
 package main;
 
+import org.joml.Vector2f;
 import windowStuff.Sprite;
 import windowStuff.TickDetect;
 
 public class Planet implements TickDetect {
 
-  public final float mass, size;
-  public float x, y, vx, vy;
   private final Sprite sprite;
+  public float mass, size;
+  public float x, y, vx, vy;
   private boolean locked = false;
 
   public Planet(Sprite sprite, float x, float y, float mass, float size) {
@@ -57,5 +58,29 @@ public class Planet implements TickDetect {
   @Override
   public boolean WasDeleted() {
     return sprite.isDeleted();
+  }
+
+  public void collide(Planet other, int type) {
+    if (other.WasDeleted() || this.WasDeleted()) {
+      return;
+    }
+    if (type == 0) {
+      return;
+    }
+    other.delete();
+
+    float momentumX = mass * vx + other.mass * other.vx;
+    float momentumY = mass * vy + other.mass * other.vy;
+    Vector2f centreOfMass = new Vector2f((mass * x + other.mass * other.x) / (mass + other.mass),
+        (mass * y + other.mass * other.y) / (mass + other.mass));
+
+    size = (float) Math.hypot(size, other.size);
+    sprite.setSize(size, size);
+    mass = mass + other.mass;
+
+    vx = momentumX / mass;
+    vy = momentumY / mass;
+    x = centreOfMass.x;
+    y = centreOfMass.y;
   }
 }
