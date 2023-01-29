@@ -1,0 +1,22 @@
+Rovnice pro pohyb planet je velmi základní, v každém kroku vypočítám jaká gravitace na ni má působit a podle toho
+změním její rychlost, pak ji pohnu ve směru rychlosti. Hlavní nestvůra je tŕída Tree. V každém kroku simulace
+vybudujeme nad planetami quad tree, pak když se snažíme zjistit jaká gravitace na některou planetu působí tak vzdálené
+buňky quad tree můžeme považovat za jednu entitu v jejich těžišti místo toho abychom počítali interakci každé
+dvojice planet. Tento nápad jsem našel na Wikipedii (https://en.wikipedia.org/wiki/N-body_simulation).
+Toto snižuje přesnost a časová složitost je pořád O(n^2), ovšem ve většině případů s mnoha planetami
+to bývá rychlejší než brute force. Moje implementace jistě není optimálni.
+
+Tree má subclass Node, který v konstruktoru bere parametry depth a pozici. Podle depth zjistí jakou má mít velikost.
+Kdykoliv vkládáme novou planetu, tak pokud je Node list, vložíme planetu do seznamu. Pokud je tento seznam moc dlouhý,
+tak Node tozdělíme na 4 kvadranty, na které si uchová pointery. Pak všechny planety které v minulosti nebo
+budoucnosti do něj přidáme, místo toho rekurzivně přidáme do jeho správného dítête podle pozice. Všechny Node
+uchovávají hmotnost a těžiště, pouze listy uchovávají seznam planet.
+
+Metoda step(Planet p, float highAccuracyRange, float G, int collisionEvent) rekurzivnê zpočítá gravitaci působící
+na planetu p  (bez násobení hmotností p, stejně bychom to hned dělili abychom získali její zrychlení.). Pokud Node
+je od planety vzdálenější než highAccuracyRange, považujeme ho za jeden bod v jeho těžišti. Jinak rekurzíme, nebo
+pokud máme list blíže než highAccuracyRange tak posčítáme gravitační síly způsobené každou planetou v něm. (kromě p).
+Metoda step také ošetří kolize planet. Asi by bylo "čistší" aby byla pure a pouze počítala gravitaci, důvod proč jsem
+to tak neudělal je že už procházím všechny blízké planety, což je příležitost zjistit jestli nějaká nekoliduje. Určitě
+by to šlo upravit tak aby funkce stále byla pure a nějakým způsobem vracela informace o kolizích, ale nevidím k tomu
+potřebu.

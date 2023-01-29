@@ -39,7 +39,7 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
   private int newCount = 1;
   private float newSpread = 100;
   private float G = 0.5f;
-  private int worldSize = 262144;
+  private int worldSize = 2<<14;
   private int collisions = 1;
   private float deletionRange = 400;
   private final Sprite deletionCircle;
@@ -185,10 +185,10 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
       if (ImGui.dragFloat("spread", spread, 5, 5, 1000)) {
         newSpread = spread[0];
       }
-      float[] del = new float[]{deletionRange};
-      if (ImGui.dragFloat("delete radius (right click)", del, 5, 5, 1000)) {
-        deletionRange = del[0];
-      }
+    }
+    float[] del = new float[]{deletionRange};
+    if (ImGui.dragFloat("delete radius (right click)", del, 5, 5, 1000)) {
+      deletionRange = del[0];
     }
     ImGui.end();
 

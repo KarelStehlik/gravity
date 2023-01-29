@@ -8,9 +8,9 @@ import windowStuff.Sprite;
 
 public class Tree implements GravitySimulator {
 
-  static final int maxDepth = 9;
+  static final int maxDepth = 10;
   static final int planetsBeforeSplit = 10;
-  static int maxSize = 25000;
+  static int maxSize;
   final BatchSystem bs;
   final List<Sprite> boxes = new ArrayList<>(1);
   private boolean visible = false;
@@ -161,23 +161,23 @@ public class Tree implements GravitySimulator {
       planets.clear();
     }
 
-    Vector2f step(Planet target, float highAccuracyRange, float G, int collision) {
+    Vector2f step(Planet target, float highAccuracyRange, float G, int collisionEvent) {
       if (mass == 0) {
         return new Vector2f(0, 0);
       }
       if (Math.abs(target.x - x) < highAccuracyRange + size
           && Math.abs(target.y - y) < highAccuracyRange + size) {
         if (bottomLeft != null) { //node is split
-          return bottomLeft.step(target, highAccuracyRange, G, collision).add(
-              bottomRight.step(target, highAccuracyRange, G, collision)).add(
-              topLeft.step(target, highAccuracyRange, G, collision)).add(
-              topRight.step(target, highAccuracyRange, G, collision));
+          return bottomLeft.step(target, highAccuracyRange, G, collisionEvent).add(
+              bottomRight.step(target, highAccuracyRange, G, collisionEvent)).add(
+              topLeft.step(target, highAccuracyRange, G, collisionEvent)).add(
+              topRight.step(target, highAccuracyRange, G, collisionEvent));
         }
         Vector2f result = new Vector2f(0, 0);
         for (Planet p : planets) {
           if (p != target) {
             if (Math.hypot(p.x - target.x, p.y - target.y) * 2 < p.size + target.size) {
-              target.collide(p, collision);
+              target.collide(p, collisionEvent);
             } else {
               double dist = Math.hypot(p.x - target.x, p.y - target.y);
               float totalForce = (float) (p.mass / (dist * dist * dist)) * G;
