@@ -1,0 +1,5 @@
+V programu máme class Game, ktetý implementuje Window.GameplayLoop, takže má funkci tick kterou náš window automaticky
+opakovaně volá, a graphicsUpdate kterou volá při každém překreslení. Zároveň implementuje UserInputHandler s funkcemi
+jako onKeyPress etc.
+Game má za úkol brát input, používáme tam knihovnu ImGui na nastavování parametrů simulace, a event onMouseButton k
+vytváření nových planet. Tyto parametry a planety vždy předáme do Tree aby vyřešil samotnou simulaci.
