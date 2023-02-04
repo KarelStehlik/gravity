@@ -84,7 +84,7 @@ public class UserInputListener {
     dy = Constants.screenSize.y - newY - lastY;
     dragging = Arrays.asList(buttonsPressed, 5).contains(true);
     if (inputHandler != null) {
-      inputHandler.onMouseMove(newX, Constants.screenSize.y - newY);
+      events.add(()->inputHandler.onMouseMove(newX, Constants.screenSize.y - newY));
     }
   }
 
