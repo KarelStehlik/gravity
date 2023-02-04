@@ -61,7 +61,7 @@ public class Planet implements TickDetect {
   }
 
   public void collide(Planet other, int type) {
-    if (other.WasDeleted() || this.WasDeleted()) {
+    if (other.WasDeleted() || this.WasDeleted() || (other.isLocked()&&!isLocked())) {
       return;
     }
     if (type == 0) {

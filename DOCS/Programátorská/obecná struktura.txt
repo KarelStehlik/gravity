@@ -1,0 +1,54 @@
+### stručně ###
+
+
+V programu jsou 3 hlavní classy:
+Window - zobrazuje grafiku a předává uživatelský vstup objektu Game. Řídí běh simulace.
+Game - drží aktuální stav a parametry simulace a předává je objektu Tree
+Tree - provádí simulaci a modifikuje stav simulace
+
+ostatní classy obsahují některé metody které k těmto účelům používáme.
+
+
+### podrobněji ###
+### Window ###
+
+
+Používáme class Window, který sám o sobě zobrazí černé fulscreen okno. Můžeme mu metodou setGame dát něco s metodami
+graphicsUpdate(float dt), kterou okno bude volat před každým překreslením, a tick(), kterou okno bude volat opakovaně
+ve vedlejším threadu. Metodou setInputHandler oknu předáme něco čemu má okno předávat uživatelský vstup
+(UserInputHandler). V tomto případě oběma metodám předáme objekt Game.
+
+
+### Game ###
+
+
+Game drží aktuální stav simulace. Game obsahuje několik proměnných popisujících chování simulace. Tyto může uživatel
+nastavit pomocí ImGui, které je vytvořeno v metodě graphicsUpdate. V metodách implementujících UserInputListener máme
+veškeré ovládání které nepatří do ImGui, například přidávání nebo mazání planet.
+
+Game.tick předá parametry a stav simulace objektu Tree, který změní stav provedením jednoho kroku simulace.
+
+
+### Tree ###
+
+
+Quadtree je datová struktura kterou v tomto případě používám k aproximaci gravitační interakce několika těles.
+Koncept je, že dělí prostor na 4 části (kvadranty), a rekurzivně dělí i tyto kvadranty pokud je to potřeba.
+Pak máme drobnější dělení v oblastech s mnoha tělesy. Pro gravitační simulaci můžeme vzdálené kvadranty považovat
+za jeden objekt, tím můžeme ušetřit nějaké výpočty. (https://en.wikipedia.org/wiki/N-body_simulation). Má implementace
+je stále O(N^2), ovšem nejhorší případ není až tak zásadní.
+
+V každém kroku simulace budujeme nad všemi planetami nový quadtree. To uděláme tak, že založíme nový quadtree
+a každou planetu vložíme do kořene. Když do nějakého vrcholu vkládáme, tak pokud tento vrchol není list, rekurzivně
+vložíme do dítěte podle pozice objektu. Pokud je list a zatím obsahuje málo objektů, tak novy objekt prostě vložíme
+do seznamu. Pokud je list a už obsahuje mnoho objektů, tak ho rozdělíme a jeho obsah rozdělíme do jeho dětí.
+vždy když vkládáme do listu tak si aktualizujeme informaci o jeho těžišti a hmotnosti.
+
+Rovnice pro pohyb planet je velmi základní, v každém kroku vypočítám, jaká gravitace na ni má působit a podle toho
+změním její rychlost, pak ji pohnu ve směru rychlosti.
+
+Metoda "step" rekurzivně spočítá gravitaci působící na planetu p  (bez násobení hmotností p, stejně bychom to hned
+dělili abychom získali její zrychlení). Pokud Node je od planety vzdálenější než highAccuracyRange, aproximujeme ho
+těžištěm. Jinak rekurzíme, nebo v případě listu posčítáme gravitační síly způsobené každou planetou v něm (kromě p).
+Metoda step také ošetří kolize planet. Asi by bylo "čistší" aby byla pure a pouze počítala gravitaci, důvod proč
+jsem to neudělal je že už procházím všechny blízké planety, což je příležitost zjistit jestli nějaká nekoliduje.

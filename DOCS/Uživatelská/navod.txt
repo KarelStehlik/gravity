@@ -1,0 +1,32 @@
+### úvod ###
+
+Program slouží k přibližné simulaci gravitace ve 2D. Umožňuje definovat polohy a vlastnosti těles a vykreslí jejich
+pohyb na základě vzájemné gravitační interakce.
+
+### ovládání ###
+
+Spustíme "Main.java". Mělo by se objevit fullscreen okno takové, jaké vidíme ve videu demo.mp4.
+Plocha obrazovky zobrazuje částečný pohled na objekty které simulujeme, scrollování je zoom,
+WSAD nebo šipky jsou pohyb kamery. V pravé části okna je ovládací panel.
+
+
+Pravým tlačítkem myši přidáváme objekty, levým tlačítkem je mažeme, mezerník je pauza. V kategorii
+ovládacího panelu "new objects" nastavujeme vlastnosti objektů které přidáváme, jako hmotnost,
+velikost nebo rychlost. Vlastností "count" můžeme přidat několik stejných objektů jedním kliknutím.
+
+
+V kategorii "simulation properties" ovládacího panelu lze nastavit několik vlastností vztahujících
+se na všechny objekty:
+
+Time step je délka kroku simulace, menší time step = větší přesnost, větší náročnost výpočtů.
+
+World size je velikost světa, ve kterém se mohou vyskytovat planety. Vše, co odletí moc daleko bude smazáno.
+World size by neměl být o moc větší než co je potřeba, jinak se snižuje rychlost. S možností "show tree"
+je možno vidět okraje světa, pokud existují nějaké planety.
+
+Pokud je možnost "on planet collision" nastavena na "pass through", tak planety které spolu zrovna kolidují
+neinteragují gravitací. Takto obejdeme situaci kde těžiště dvou planet jsou k sobě hodně blízko, pak by působila
+ohromná gravitace a my nemáme nekonečnou přesnost. Defaultně jsou kolidující objekty spojeny do jednoho
+tak, že je zachována hmotnost a hybnost.
+
+možnost  "show tree" zobrazí všechny listy Quadtree použitého v simulaci. Hlavně pro zajímavost.

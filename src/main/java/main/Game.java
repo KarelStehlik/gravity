@@ -126,7 +126,7 @@ public class Game implements Window.GameplayLoop, UserInputHandler {
   @Override
   public void graphicsUpdate(float dt) {
     //ImGui.showDemoWindow();
-    ImGui.begin("ui");
+    ImGui.begin("menu");
     if (ImGui.collapsingHeader("simulation properties")) {
       float[] value = new float[]{timeStep};
       if (ImGui.sliderFloat("time step", value, 0, 1)) {

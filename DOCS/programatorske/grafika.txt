@@ -1,6 +1,0 @@
-Používám knihovnu LWJGL, v podstatě Java wrapper na OpenGL.
-Do značné míry jsem se zde řídil tutorialem https://www.youtube.com/watch?v=025QFeZfeyM&list=WL&index=3
-Grafiku jsem udělal pro jiný projekt, jak přesně to funguje není smyslem tohoto projektu.
-GUI používám https://github.com/SpaiR/imgui-java, Java verzi Dear ImGui. Tato knihovna je kompatibilní z LWJGL a docela jednoduchá k použití.
-Nějaký boilerplate jsem zabudoval do třídy Window, aktivně knihovnu používám ve funkci Game.graphicsUpdate. z této funkce by mělo být jednoduše vidět jak GUI funguje.
-V ImGui není potřeba dělit deklaraci nějakého widgetu a co ten widget dělá, což je docela praktické.

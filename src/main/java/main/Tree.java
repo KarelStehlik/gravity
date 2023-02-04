@@ -20,28 +20,6 @@ public class Tree implements GravitySimulator {
     this.bs = bs;
   }
 
-  private static Planet quickSelect(List<Planet> planets, int index, Key key) {
-    Planet pivot = planets.get(0);
-    List<Planet> lesser = new ArrayList<>(planets.size() / 2), equal = new ArrayList<>(
-        1), greater = new ArrayList<>(planets.size() / 2);
-    for (Planet p : planets) {
-      if (key.get(p) > key.get(pivot)) {
-        greater.add(p);
-      } else if (key.get(p) < key.get(pivot)) {
-        lesser.add(p);
-      } else {
-        equal.add(p);
-      }
-    }
-    if (lesser.size() > index) {
-      return quickSelect(lesser, index, key);
-    }
-    if (lesser.size() + equal.size() > index) {
-      return equal.get(0);
-    }
-    return quickSelect(greater, index - (lesser.size() + equal.size()), key);
-  }
-
   public boolean isVisible() {
     return visible;
   }
